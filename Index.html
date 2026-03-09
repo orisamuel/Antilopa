@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מדד האנטילופה</title>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–sand: #f5e6c8;
+–orange: #e8621a;
+–dark-orange: #c44d0f;
+–yellow: #f5c842;
+–green: #2d8a4e;
+–brown: #5c3317;
+–sky: #87ceeb;
+–bg: #fdf6e8;
+–text: #2a1a08;
+}
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘Heebo’, sans-serif;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+overflow: hidden;
+position: relative;
+padding: 20px;
+}
+
+/* Savanna background */
+.savanna-bg {
+position: fixed;
+inset: 0;
+z-index: 0;
+overflow: hidden;
+}
+
+.sky-layer {
+position: absolute;
+inset: 0;
+background: linear-gradient(180deg, #fde8b0 0%, #fdf6e8 60%);
+}
+
+.sun {
+position: absolute;
+top: 40px;
+left: 60px;
+width: 70px;
+height: 70px;
+background: radial-gradient(circle, #ffe066, #f5c842);
+border-radius: 50%;
+box-shadow: 0 0 40px rgba(245,200,66,0.6), 0 0 80px rgba(245,200,66,0.2);
+animation: sunPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes sunPulse {
+from { box-shadow: 0 0 40px rgba(245,200,66,0.6), 0 0 80px rgba(245,200,66,0.2); }
+to { box-shadow: 0 0 60px rgba(245,200,66,0.8), 0 0 120px rgba(245,200,66,0.3); }
+}
+
+.ground {
+position: absolute;
+bottom: 0;
+left: 0;
+right: 0;
+height: 120px;
+background: linear-gradient(180deg, #c8a84b 0%, #a07830 100%);
+border-radius: 60% 60% 0 0 / 30px 30px 0 0;
+}
+
+.grass {
+position: absolute;
+bottom: 110px;
+left: 0; right: 0;
+height: 40px;
+background: linear-gradient(180deg, #5a8a2a 0%, #4a7520 100%);
+border-radius: 50% 50% 0 0 / 20px 20px 0 0;
+}
+
+.acacia {
+position: absolute;
+bottom: 145px;
+}
+
+.acacia-trunk {
+width: 10px;
+background: var(–brown);
+border-radius: 3px;
+margin: 0 auto;
+}
+
+.acacia-top {
+background: #4a8a20;
+border-radius: 50%;
+position: relative;
+top: 8px;
+}
+
+.acacia1 { left: 5%; }
+.acacia1 .acacia-trunk { height: 50px; }
+.acacia1 .acacia-top { width: 80px; height: 35px; }
+
+.acacia2 { right: 8%; }
+.acacia2 .acacia-trunk { height: 70px; }
+.acacia2 .acacia-top { width: 110px; height: 45px; }
+
+.acacia3 { left: 25%; }
+.acacia3 .acacia-trunk { height: 35px; }
+.acacia3 .acacia-top { width: 55px; height: 25px; }
+
+.cloud {
+position: absolute;
+background: rgba(255,255,255,0.7);
+border-radius: 50px;
+animation: cloudDrift linear infinite;
+}
+.cloud::before, .cloud::after {
+content: ‘’;
+position: absolute;
+background: inherit;
+border-radius: 50%;
+}
+.cloud1 { top: 30px; width: 100px; height: 30px; animation-duration: 25s; animation-delay: 0s; }
+.cloud1::before { width: 50px; height: 40px; top: -20px; left: 15px; }
+.cloud1::after { width: 40px; height: 35px; top: -15px; left: 40px; }
+.cloud2 { top: 55px; width: 70px; height: 22px; animation-duration: 32s; animation-delay: -10s; }
+.cloud2::before { width: 35px; height: 30px; top: -15px; left: 10px; }
+.cloud2::after { width: 28px; height: 25px; top: -12px; left: 28px; }
+
+@keyframes cloudDrift {
+from { right: -200px; }
+to { right: 110%; }
+}
+
+/* Walking antelope */
+.antelope-walk {
+position: absolute;
+bottom: 145px;
+right: -80px;
+font-size: 48px;
+animation: antelopeWalk 12s linear infinite;
+filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+}
+
+@keyframes antelopeWalk {
+from { right: -80px; }
+to { right: 110%; }
+}
+
+/* Main card */
+.quiz-card {
+background: white;
+border-radius: 28px;
+padding: 36px 32px 32px;
+width: 100%;
+max-width: 460px;
+position: relative;
+z-index: 10;
+box-shadow:
+0 4px 0 #c4a030,
+0 8px 0 #a08020,
+0 12px 40px rgba(0,0,0,0.15);
+border: 2px solid #e8d080;
+}
+
+/* Header - always visible */
+.quiz-header {
+text-align: center;
+margin-bottom: 28px;
+padding-bottom: 20px;
+border-bottom: 2px dashed #f0d890;
+}
+
+.antelope-icon {
+font-size: 52px;
+display: block;
+margin-bottom: 6px;
+animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+0%, 100% { transform: translateY(0); }
+50% { transform: translateY(-8px); }
+}
+
+.main-title {
+font-family: ‘Secular One’, sans-serif;
+font-size: 34px;
+color: var(–orange);
+line-height: 1.1;
+margin-bottom: 6px;
+text-shadow: 2px 2px 0 rgba(232,98,26,0.15);
+}
+
+.main-subtitle {
+font-size: 14px;
+color: #888;
+font-weight: 400;
+}
+
+/* Progress bar */
+.progress-bar-container {
+background: #f0e8d0;
+border-radius: 10px;
+height: 8px;
+margin-bottom: 24px;
+overflow: hidden;
+}
+
+.progress-bar-fill {
+height: 100%;
+background: linear-gradient(90deg, var(–yellow), var(–orange));
+border-radius: 10px;
+transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+width: 0%;
+}
+
+.step-counter {
+text-align: center;
+font-size: 12px;
+color: #aaa;
+margin-bottom: 20px;
+letter-spacing: 1px;
+}
+
+/* Slides wrapper */
+.slides-wrapper {
+position: relative;
+overflow: hidden;
+}
+
+/* Each slide */
+.slide {
+display: none;
+animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.slide.active {
+display: block;
+}
+
+@keyframes slideIn {
+from { transform: translateX(-30px); opacity: 0; }
+to { transform: translateX(0); opacity: 1; }
+}
+
+.question-text {
+font-size: 20px;
+font-weight: 700;
+color: var(–text);
+margin-bottom: 20px;
+line-height: 1.4;
+}
+
+.question-num {
+display: inline-block;
+background: var(–orange);
+color: white;
+width: 28px;
+height: 28px;
+border-radius: 50%;
+text-align: center;
+line-height: 28px;
+font-size: 13px;
+font-weight: 900;
+margin-left: 8px;
+flex-shrink: 0;
+}
+
+/* Inputs */
+input[type=“tel”], input[type=“text”] {
+width: 100%;
+background: #fdf6e8;
+border: 2px solid #e8d080;
+border-radius: 14px;
+padding: 16px 18px;
+font-family: ‘Heebo’, sans-serif;
+font-size: 18px;
+color: var(–text);
+direction: ltr;
+text-align: center;
+outline: none;
+transition: all 0.2s;
+letter-spacing: 3px;
+}
+
+input:focus {
+border-color: var(–orange);
+background: #fff;
+box-shadow: 0 0 0 4px rgba(232,98,26,0.1);
+}
+
+input::placeholder {
+color: #ccc;
+letter-spacing: 2px;
+}
+
+.input-hint {
+text-align: center;
+font-size: 12px;
+color: #bbb;
+margin-top: 8px;
+}
+
+/* Bamba / Bisli slider */
+.snack-slider-container {
+padding: 10px 0;
+}
+
+.snack-labels {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 16px;
+}
+
+.snack-option {
+text-align: center;
+cursor: pointer;
+transition: transform 0.2s;
+}
+
+.snack-option:hover { transform: scale(1.1); }
+
+.snack-emoji {
+font-size: 48px;
+display: block;
+margin-bottom: 4px;
+}
+
+.snack-name {
+font-size: 14px;
+font-weight: 700;
+color: var(–text);
+}
+
+.vs-badge {
+font-family: ‘Secular One’, sans-serif;
+font-size: 22px;
+color: var(–orange);
+background: #fdf6e8;
+border: 2px solid #e8d080;
+border-radius: 50%;
+width: 44px;
+height: 44px;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.slider-track {
+position: relative;
+margin: 0 10px;
+}
+
+input[type=“range”] {
+-webkit-appearance: none;
+appearance: none;
+width: 100%;
+height: 10px;
+background: linear-gradient(90deg, #e8c050, #ff6b20);
+border-radius: 10px;
+outline: none;
+direction: ltr;
+border: none;
+letter-spacing: 0;
+padding: 0;
+box-shadow: none;
+}
+
+input[type=“range”]::-webkit-slider-thumb {
+-webkit-appearance: none;
+width: 32px;
+height: 32px;
+border-radius: 50%;
+background: white;
+border: 3px solid var(–orange);
+cursor: pointer;
+box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+transition: transform 0.1s;
+}
+
+input[type=“range”]::-webkit-slider-thumb:hover {
+transform: scale(1.2);
+}
+
+.slider-value-display {
+text-align: center;
+margin-top: 12px;
+font-size: 13px;
+color: #888;
+min-height: 20px;
+}
+
+/* Next button */
+.next-btn {
+width: 100%;
+padding: 16px;
+background: linear-gradient(135deg, var(–orange), var(–dark-orange));
+border: none;
+border-radius: 14px;
+color: white;
+font-family: ‘Heebo’, sans-serif;
+font-size: 17px;
+font-weight: 700;
+cursor: pointer;
+margin-top: 24px;
+transition: all 0.2s;
+box-shadow: 0 4px 0 var(–dark-orange), 0 6px 16px rgba(232,98,26,0.3);
+position: relative;
+top: 0;
+}
+
+.next-btn:hover {
+top: 2px;
+box-shadow: 0 2px 0 var(–dark-orange), 0 4px 12px rgba(232,98,26,0.3);
+}
+
+.next-btn:active {
+top: 4px;
+box-shadow: 0 0px 0 var(–dark-orange);
+}
+
+/* Loading screen */
+.loading-slide {
+text-align: center;
+padding: 10px 0 20px;
+}
+
+.loading-title {
+font-family: ‘Secular One’, sans-serif;
+font-size: 22px;
+color: var(–orange);
+margin-bottom: 6px;
+}
+
+.loading-subtitle {
+font-size: 14px;
+color: #aaa;
+margin-bottom: 24px;
+}
+
+.loading-facts {
+list-style: none;
+text-align: right;
+}
+
+.loading-fact {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 9px 0;
+font-size: 14px;
+color: #bbb;
+border-bottom: 1px dashed #f0e8d0;
+transition: all 0.3s;
+}
+
+.loading-fact.active {
+color: var(–orange);
+font-weight: 600;
+}
+
+.loading-fact.done {
+color: var(–green);
+}
+
+.fact-dot {
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: #f0e8d0;
+flex-shrink: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 9px;
+transition: all 0.3s;
+}
+
+.loading-fact.active .fact-dot {
+background: var(–orange);
+color: white;
+animation: dotPulse 0.8s ease-in-out infinite alternate;
+}
+
+.loading-fact.done .fact-dot {
+background: var(–green);
+color: white;
+}
+
+@keyframes dotPulse {
+from { transform: scale(0.9); }
+to { transform: scale(1.1); }
+}
+
+.loading-bar-wrap {
+background: #f0e8d0;
+border-radius: 10px;
+height: 8px;
+margin-top: 20px;
+overflow: hidden;
+}
+
+.loading-bar-inner {
+height: 100%;
+background: linear-gradient(90deg, var(–yellow), var(–orange));
+width: 0%;
+border-radius: 10px;
+transition: width 0.5s ease;
+}
+
+/* Result screen */
+.result-slide {
+text-align: center;
+padding: 0 0 8px;
+}
+
+.result-headline {
+font-family: ‘Secular One’, sans-serif;
+font-size: 20px;
+color: #888;
+margin-bottom: 4px;
+}
+
+.result-big-title {
+font-family: ‘Secular One’, sans-serif;
+font-size: 30px;
+color: var(–orange);
+margin-bottom: 24px;
+}
+
+/* Gauge - clean, no overlap */
+.gauge-wrap {
+margin: 0 auto 16px;
+width: 260px;
+}
+
+.gauge-svg-el {
+width: 100%;
+overflow: visible;
+display: block;
+}
+
+.score-below-gauge {
+text-align: center;
+margin-top: 8px;
+}
+
+.score-big-num {
+font-family: ‘Secular One’, sans-serif;
+font-size: 56px;
+color: var(–orange);
+line-height: 1;
+}
+
+.score-unit {
+font-size: 14px;
+color: #aaa;
+letter-spacing: 1px;
+margin-top: 2px;
+}
+
+.score-tag {
+display: inline-block;
+margin: 16px 0;
+padding: 8px 22px;
+border-radius: 20px;
+font-size: 15px;
+font-weight: 700;
+font-family: ‘Secular One’, sans-serif;
+}
+
+.tag-high { background: #fff3e0; color: #e65c00; border: 2px solid #ffb74d; }
+.tag-med { background: #f9fbe7; color: #7cb342; border: 2px solid #aed581; }
+.tag-low { background: #e8f5e9; color: #388e3c; border: 2px solid #81c784; }
+
+.result-mini-stats {
+display: flex;
+gap: 10px;
+margin: 16px 0 20px;
+}
+
+.mini-stat {
+flex: 1;
+background: #fdf6e8;
+border: 2px solid #f0e0a0;
+border-radius: 12px;
+padding: 12px 8px;
+text-align: center;
+}
+
+.mini-stat-val {
+font-family: ‘Secular One’, sans-serif;
+font-size: 20px;
+color: var(–orange);
+margin-bottom: 2px;
+}
+
+.mini-stat-label {
+font-size: 10px;
+color: #bbb;
+letter-spacing: 1px;
+text-transform: uppercase;
+}
+
+.again-btn {
+width: 100%;
+padding: 14px;
+background: transparent;
+border: 2px solid #e8d080;
+border-radius: 14px;
+font-family: ‘Heebo’, sans-serif;
+font-size: 14px;
+color: #aaa;
+cursor: pointer;
+transition: all 0.2s;
+}
+
+.again-btn:hover {
+border-color: var(–orange);
+color: var(–orange);
+}
+</style>
+
+</head>
+<body>
+
+<div class="savanna-bg">
+  <div class="sky-layer"></div>
+  <div class="sun"></div>
+  <div class="cloud cloud1"></div>
+  <div class="cloud cloud2"></div>
+  <div class="acacia acacia1"><div class="acacia-top"></div><div class="acacia-trunk"></div></div>
+  <div class="acacia acacia2"><div class="acacia-top"></div><div class="acacia-trunk"></div></div>
+  <div class="acacia acacia3"><div class="acacia-top"></div><div class="acacia-trunk"></div></div>
+  <div class="grass"></div>
+  <div class="ground"></div>
+  <div class="antelope-walk">🦌</div>
+</div>
+
+<div class="quiz-card">
+  <!-- Header -->
+  <div class="quiz-header">
+    <span class="antelope-icon">🦌</span>
+    <div class="main-title">מדד האנטילופה</div>
+    <div class="main-subtitle">כמה שאלות קטנות ומיד תדעו</div>
+  </div>
+
+  <div class="progress-bar-container">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <div class="step-counter" id="stepCounter">שאלה 1 מתוך 4</div>
+
+  <div class="slides-wrapper">
+
+```
+<!-- SLIDE 1 -->
+<div class="slide active" id="slide1">
+  <div class="question-text">
+    <span class="question-num">1</span>
+    מהם הפרטים שרשומים על כרטיס האשראי שלך?
+  </div>
+  <input type="tel" id="cardNumber" placeholder="0000  0000  0000  0000" maxlength="19" oninput="formatCard(this)">
+  <div class="input-hint">הקלד את המספר הארוך שבחזית הכרטיס</div>
+  <button class="next-btn" onclick="goNext(2)">המשך ←</button>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide" id="slide2">
+  <div class="question-text">
+    <span class="question-num">2</span>
+    מה התוקף?
+  </div>
+  <input type="tel" id="expiry" placeholder="MM / YY" maxlength="5" oninput="formatExpiry(this)">
+  <div class="input-hint">שתי ספרות לחודש, שתיים לשנה</div>
+  <button class="next-btn" onclick="goNext(3)">המשך ←</button>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide" id="slide3">
+  <div class="question-text">
+    <span class="question-num">3</span>
+    אם היו לך 3 ספרות בגב הכרטיס — מה הם היו?
+  </div>
+  <input type="tel" id="cvv" placeholder="• • •" maxlength="3" oninput="this.value=this.value.replace(/\D/g,'')">
+  <div class="input-hint">בין היתר, תשובת ״לא יודע״ לא תתקבל</div>
+  <button class="next-btn" onclick="goNext(4)">המשך ←</button>
+</div>
+
+<!-- SLIDE 4 - Bamba vs Bisli -->
+<div class="slide" id="slide4">
+  <div class="question-text">
+    <span class="question-num">4</span>
+    הכי חשוב: איפה אתה עומד?
+  </div>
+  <div class="snack-slider-container">
+    <div class="snack-labels">
+      <div class="snack-option" onclick="setSlider(0)">
+        <span class="snack-emoji">🥜</span>
+        <span class="snack-name">במבה</span>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="snack-option" onclick="setSlider(100)">
+        <span class="snack-emoji">🌀</span>
+        <span class="snack-name">ביסלי</span>
+      </div>
+    </div>
+    <div class="slider-track">
+      <input type="range" id="snackSlider" min="0" max="100" value="50" oninput="updateSliderLabel(this.value)">
+    </div>
+    <div class="slider-value-display" id="sliderLabel">🤔 אתה עדיין מחליט...</div>
+  </div>
+  <button class="next-btn" onclick="startCalculation()">חשב את מדד האנטילופה שלי! 🦌</button>
+</div>
+
+<!-- LOADING SLIDE -->
+<div class="slide" id="slideLoading">
+  <div class="loading-slide">
+    <div class="loading-title">🔬 מנתח את האנטילופה...</div>
+    <div class="loading-subtitle">הסבלנות היא מידה ספרינטאית</div>
+    <ul class="loading-facts">
+      <li class="loading-fact" id="lf1"><div class="fact-dot" id="ld1">•</div>מודד רמות האנטילופה בדם...</li>
+      <li class="loading-fact" id="lf2"><div class="fact-dot" id="ld2">•</div>בודק עמידה ב-savanna stress test...</li>
+      <li class="loading-fact" id="lf3"><div class="fact-dot" id="ld3">•</div>מחשב יחס במבה-ביסלי גנטי...</li>
+      <li class="loading-fact" id="lf4"><div class="fact-dot" id="ld4">•</div>מכייל מחוג האנטילופה...</li>
+    </ul>
+    <div class="loading-bar-wrap">
+      <div class="loading-bar-inner" id="calcBar"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT SLIDE -->
+<div class="slide" id="slideResult">
+  <div class="result-slide">
+    <div class="result-headline">המדד שלך הוא</div>
+    <div class="result-big-title">🦌 מדד האנטילופה</div>
+
+    <!-- Gauge -->
+    <div class="gauge-wrap">
+      <svg class="gauge-svg-el" viewBox="0 0 260 145">
+        <!-- Background track -->
+        <path d="M 20 130 A 110 110 0 0 1 240 130"
+          fill="none" stroke="#f0e8d0" stroke-width="20" stroke-linecap="round"/>
+        <!-- Color zones -->
+        <path d="M 20 130 A 110 110 0 0 1 65 47"
+          fill="none" stroke="#ffd54f" stroke-width="20" stroke-linecap="round" opacity="0.4"/>
+        <path d="M 65 47 A 110 110 0 0 1 130 20"
+          fill="none" stroke="#ffb74d" stroke-width="20" stroke-linecap="round" opacity="0.4"/>
+        <path d="M 130 20 A 110 110 0 0 1 195 47"
+          fill="none" stroke="#ff8a65" stroke-width="20" stroke-linecap="round" opacity="0.4"/>
+        <path d="M 195 47 A 110 110 0 0 1 240 130"
+          fill="none" stroke="#e8621a" stroke-width="20" stroke-linecap="round" opacity="0.4"/>
+        <!-- Active arc -->
+        <path id="activeArc" d="M 20 130 A 110 110 0 0 1 20 130"
+          fill="none" stroke="url(#gGrad)" stroke-width="20" stroke-linecap="round"/>
+        <!-- Needle group: pivot at 130,130 -->
+        <g id="gaugeNeedle" transform="rotate(-90, 130, 130)">
+          <line x1="130" y1="130" x2="130" y2="35"
+            stroke="#2a1a08" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="130" cy="130" r="10" fill="#2a1a08"/>
+          <circle cx="130" cy="130" r="5" fill="white"/>
+        </g>
+        <!-- Zone labels -->
+        <text x="10" y="148" fill="#aaa" font-size="9" font-family="Heebo" text-anchor="middle">0</text>
+        <text x="250" y="148" fill="#aaa" font-size="9" font-family="Heebo" text-anchor="middle">100</text>
+        <defs>
+          <linearGradient id="gGrad" gradientUnits="userSpaceOnUse" x1="20" y1="130" x2="240" y2="130">
+            <stop offset="0%" stop-color="#ffd54f"/>
+            <stop offset="100%" stop-color="#e8621a"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- Score below gauge, no overlap -->
+    <div class="score-below-gauge">
+      <div class="score-big-num" id="scoreNum">0</div>
+      <div class="score-unit">נקודות אנטילופה</div>
+    </div>
+
+    <div class="score-tag" id="scoreTag"></div>
+
+    <div class="result-mini-stats">
+      <div class="mini-stat">
+        <div class="mini-stat-val" id="statA">—</div>
+        <div class="mini-stat-label">מהירות</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-val" id="statB">—</div>
+        <div class="mini-stat-label">תגובה</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-val" id="statC">—</div>
+        <div class="mini-stat-label">ריח סכנה</div>
+      </div>
+    </div>
+
+    <button class="again-btn" onclick="resetAll()">🔄 בדוק חבר/ה</button>
+
+    <div style="margin-top: 20px; padding: 14px 16px; background: #fdf6e8; border: 1px dashed #e8d080; border-radius: 12px; font-size: 12px; color: #aaa; line-height: 1.6; text-align: center;">
+      🌍 <strong style="color: #c88030;">איגוד האנטילופות העולמי</strong> מודה לך על תרומתך
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<script>
+const TOTAL_STEPS = 4;
+
+function setProgress(step) {
+  document.getElementById('progressFill').style.width = (step / TOTAL_STEPS * 100) + '%';
+  if (step <= TOTAL_STEPS) {
+    document.getElementById('stepCounter').textContent = `שאלה ${step} מתוך ${TOTAL_STEPS}`;
+  } else {
+    document.getElementById('stepCounter').textContent = '';
+  }
+}
+
+setProgress(1);
+
+function goNext(nextSlide) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('slide' + nextSlide).classList.add('active');
+  setProgress(nextSlide);
+}
+
+function formatCard(input) {
+  let v = input.value.replace(/\D/g, '').slice(0, 16);
+  input.value = v.match(/.{1,4}/g)?.join('  ') || v;
+}
+
+function formatExpiry(input) {
+  let v = input.value.replace(/\D/g, '').slice(0, 4);
+  if (v.length >= 2) v = v.slice(0,2) + ' / ' + v.slice(2);
+  input.value = v;
+}
+
+function setSlider(val) {
+  document.getElementById('snackSlider').value = val;
+  updateSliderLabel(val);
+}
+
+function updateSliderLabel(val) {
+  val = parseInt(val);
+  let txt;
+  if (val < 15) txt = '🥜 במבה עד הסוף!';
+  else if (val < 35) txt = '🥜 נטייה חזקה לבמבה';
+  else if (val < 50) txt = '🤔 כנראה במבה אבל לא מודה';
+  else if (val === 50) txt = '⚖️ שווה בשווה — זה חשוד';
+  else if (val < 65) txt = '🤔 כנראה ביסלי אבל מסתיר';
+  else if (val < 85) txt = '🌀 ביסלי בנשמה';
+  else txt = '🌀 ביסלי עד הסוף!';
+  document.getElementById('sliderLabel').textContent = txt;
+}
+
+async function startCalculation() {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('slideLoading').classList.add('active');
+  document.getElementById('stepCounter').textContent = 'מחשב...';
+  document.getElementById('progressFill').style.width = '100%';
+
+  const steps = [
+    {fact: 'lf1', dot: 'ld1', delay: 500, done: 1100},
+    {fact: 'lf2', dot: 'ld2', delay: 1100, done: 1900},
+    {fact: 'lf3', dot: 'ld3', delay: 1900, done: 2600},
+    {fact: 'lf4', dot: 'ld4', delay: 2600, done: 3200},
+  ];
+  const barTargets = [25, 50, 75, 100];
+
+  steps.forEach((s, i) => {
+    setTimeout(() => {
+      document.getElementById(s.fact).className = 'loading-fact active';
+      document.getElementById(s.dot).textContent = '●';
+      document.getElementById('calcBar').style.width = barTargets[i] + '%';
+    }, s.delay);
+    setTimeout(() => {
+      document.getElementById(s.fact).className = 'loading-fact done';
+      document.getElementById(s.dot).textContent = '✓';
+    }, s.done);
+  });
+
+  setTimeout(showResult, 3800);
+}
+
+function showResult() {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('slideResult').classList.add('active');
+  document.getElementById('stepCounter').textContent = '🦌 התוצאה שלך';
+
+  const score = Math.floor(Math.random() * 101); // 0-100
+  animateScore(score);
+  animateNeedle(score);
+
+  let tagText, tagClass;
+  if (score >= 75) { tagText = '🦌 אנטילופה מהשורה הראשונה'; tagClass = 'tag-high'; }
+  else if (score >= 40) { tagText = '🐐 אנטילופה סבירה'; tagClass = 'tag-med'; }
+  else { tagText = '🐢 לא ממש אנטילופה'; tagClass = 'tag-low'; }
+
+  const tag = document.getElementById('scoreTag');
+  tag.textContent = tagText;
+  tag.className = 'score-tag ' + tagClass;
+
+  const speeds = ['⚡ גבוהה', '🏃 טובה', '🚶 בינונית', '🐌 נמוכה'];
+  const reactions = ['💥 רפלקס', '✅ תקין', '⏳ איטי'];
+  const smells = ['👃 חד', '🌿 בסדר', '😴 קהה'];
+
+  document.getElementById('statA').textContent = speeds[Math.floor(Math.random() * speeds.length)];
+  document.getElementById('statB').textContent = reactions[Math.floor(Math.random() * reactions.length)];
+  document.getElementById('statC').textContent = smells[Math.floor(Math.random() * smells.length)];
+}
+
+function animateScore(target) {
+  let current = 0;
+  const duration = 2000;
+  const start = performance.now();
+  const el = document.getElementById('scoreNum');
+  function update(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const e = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.floor(e * target);
+    if (p < 1) requestAnimationFrame(update);
+    else el.textContent = target;
+  }
+  requestAnimationFrame(update);
+}
+
+function animateNeedle(score) {
+  // Score 0-100 → needle angle -90deg to +90deg
+  // pivot at cx=130, cy=130
+  const targetAngle = -90 + (score / 100) * 180;
+  const duration = 2200;
+  const start = performance.now();
+  const needle = document.getElementById('gaugeNeedle');
+  const arcEl = document.getElementById('activeArc');
+
+  function update(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const e = 1 - Math.pow(1 - p, 4);
+    const angle = -90 + e * (targetAngle + 90);
+    needle.setAttribute('transform', `rotate(${angle}, 130, 130)`);
+
+    // Animate arc
+    // Arc goes from left (20,130) sweeping right
+    // fraction of arc complete = e * score/100
+    const frac = e * (score / 100);
+    // Upper semicircle: angles go π→2π (upward over the top)
+    const cx = 130, cy = 130, r = 110;
+    const endAngleRad = Math.PI + frac * Math.PI;
+    const x1 = cx + r * Math.cos(Math.PI);
+    const y1 = cy + r * Math.sin(Math.PI);
+    const x2 = cx + r * Math.cos(endAngleRad);
+    const y2 = cy + r * Math.sin(endAngleRad);
+    arcEl.setAttribute('d', `M ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2}`);
+
+    if (p < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+function resetAll() {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('slide1').classList.add('active');
+  setProgress(1);
+  document.getElementById('cardNumber').value = '';
+  document.getElementById('expiry').value = '';
+  document.getElementById('cvv').value = '';
+  document.getElementById('snackSlider').value = 50;
+  document.getElementById('sliderLabel').textContent = '🤔 אתה עדיין מחליט...';
+  // Reset loading
+  [1,2,3,4].forEach(i => {
+    document.getElementById('lf'+i).className = 'loading-fact';
+    document.getElementById('ld'+i).textContent = '•';
+  });
+  document.getElementById('calcBar').style.width = '0%';
+  document.getElementById('scoreNum').textContent = '0';
+  document.getElementById('activeArc').setAttribute('d', 'M 20 130 A 110 110 0 0 1 19.99 129.9');
+  document.getElementById('gaugeNeedle').setAttribute('transform', 'rotate(-90, 130, 130)');
+}
+</script>
+
+</body>
+</html>
